@@ -1,0 +1,293 @@
+---
+format: 
+  html:
+    grid: 
+      sidebar-width: 0px
+      body-width: 1500px
+      margin-width: 0px
+    center: false
+    theme: default
+    margin-bottom: 0px
+    margin-left: 0px
+    border-color: white
+    toc: false
+    smooth-scroll: false
+editor: source
+margin: 0.05
+embed-resources: true
+execute:
+    echo: false
+    message: false
+    warning: false
+---
+
+
+```{css}
+
+/* define class for takeaway text boxes */
+.takeaway {
+font-size: 16px;
+background-color: cornsilk;
+border-style: solid;
+border: 2px solid darkblue;
+padding: 5px
+}
+
+/* font sizes for datatable header and data */
+th { font-size: 16px; }
+td { font-size: 14px; }
+```
+
+```{r}
+#| label: load-packages
+#| include: false
+
+library(tidyverse)
+library(ggiraph)
+library(DT)
+library(cowplot)
+options(dplyr.summarise.inform = FALSE)
+knitr::opts_knit$set(root.dir = "O:/Projects/Faculty Survey/2025 Faculty Climate Survey")
+```
+
+
+```{r}
+#| label: load-data
+#| include: false
+#| cache: false
+
+# load data
+load("Data/Survey data 2021-2025.Rdata")
+dat <- dat %>%
+  rename(School = school) %>%
+  mutate(Gender = ifelse(Gender == "Underrepresented identities/Intersex", "Underrepresented identities", Gender))
+
+# unit variables
+sch <- "Divinity School"
+unit <- "Divinity School"
+unit_type <- "school"
+unit_report_type <- "school"
+unit_leader <- "Dean"
+phylogeny <- "tip"
+level <- 2
+lsym <- sym(paste0("level_", level))
+
+ladder_levels <- unique(dat$Ladder)
+
+# load functions
+source("Project scripts/Survey functions 2025 updated.R")
+source("Project scripts/Functions longitudinal.R")
+```
+
+
+## Student respect
+
+:::::: {.column-page-right}
+::::: {.panel-tabset}
+
+### Overall
+
+```{r}
+tr1 <- survey_trend(dat, question = "A2_agree_3", demographic = "Overall")
+txt <- trend_descriptor2(tr1)
+ggtrend(tr1, text = txt, pngname = "DIV_Overall_StudentRespect")
+```
+
+### By faculty track
+
+```{r}
+tr2 <- survey_trend(dat, question = "A2_agree_3", demographic = "Ladder")
+txt <- trend_descriptor2(tr2)
+ggtrend(tr2, text = txt, pngname = "DIV_byFacultyTrack_StudentRespect")
+```
+
+### By race/ethnicity
+
+```{r}
+tr3 <- survey_trend(dat, question = "A2_agree_3", demographic = "Race")
+txt <- trend_descriptor2(tr3)
+ggtrend(tr3, text = txt, pngname = "DIV_byRace_StudentRespect")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: Underrepresented racial/ethnic identities include American Indian or Alaska Native, Black or African American, Hispanic or Latina/Latino/Latinx, Middle Eastern or North African, Native Hawaiian or Other Pacific Islander, and self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### By gender
+
+```{r}
+tr4 <- survey_trend(dat, question = "A2_agree_3", demographic = "Gender")
+txt <- trend_descriptor2(tr4)
+ggtrend(tr4, text = txt, pngname = "DIV_byGender_StudentRespect")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: Underrepresented gender identities include non-binary, transgender, intersex, and self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### By sexual orientation
+
+```{r}
+tr5 <- survey_trend(dat, question = "A2_agree_3", demographic = "LGBQA")
+txt <- trend_descriptor2(tr5)
+ggtrend(tr5, text = txt, pngname = "DIV_bySexualOrientation_StudentRespect")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: LGBQA+ stands for lesbian, gay, bisexual, queer, asexual, and additional self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### Data table
+
+```{r}
+#| label: table-stud-respect
+#| fig-height: 8
+#| column: page-right
+
+make_table(tr1, tr2, tr3, tr4, tr5, title = "DIV_StudentRespect")
+```
+
+:::::
+::::::
+
+
+## Respect in unit
+
+:::::: {.column-page-right}
+::::: {.panel-tabset}
+
+### Overall
+
+```{r}
+tr1 <- survey_trend(dat, question = "A2_disrespected_1", demographic = "Overall")
+txt <- trend_descriptor2(tr1)
+ggtrend(tr1, text = txt, pngname = "DIV_Overall_RespectInUnit")
+```
+
+### By faculty track
+
+```{r}
+tr2 <- survey_trend(dat, question = "A2_disrespected_1", demographic = "Ladder")
+txt <- trend_descriptor2(tr2)
+ggtrend(tr2, text = txt, pngname = "DIV_byFacultyTrack_RespectInUnit")
+```
+
+### By race/ethnicity
+
+```{r}
+tr3 <- survey_trend(dat, question = "A2_disrespected_1", demographic = "Race")
+txt <- trend_descriptor2(tr3)
+ggtrend(tr3, text = txt, pngname = "DIV_byRace_RespectInUnit")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: Underrepresented racial/ethnic identities include American Indian or Alaska Native, Black or African American, Hispanic or Latina/Latino/Latinx, Middle Eastern or North African, Native Hawaiian or Other Pacific Islander, and self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### By gender
+
+```{r}
+tr4 <- survey_trend(dat, question = "A2_disrespected_1", demographic = "Gender")
+txt <- trend_descriptor2(tr4)
+ggtrend(tr4, text = txt, pngname = "DIV_byGender_RespectInUnit")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: Underrepresented gender identities include non-binary, transgender, intersex, and self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### By sexual orientation
+
+```{r}
+tr5 <- survey_trend(dat, question = "A2_disrespected_1", demographic = "LGBQA")
+txt <- trend_descriptor2(tr5)
+ggtrend(tr5, text = txt, pngname = "DIV_bySexualOrientation_RespectInUnit")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: LGBQA+ stands for lesbian, gay, bisexual, queer, asexual, and additional self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### Data table
+
+```{r}
+#| label: table-school-respect
+#| fig-height: 8
+#| column: page-right
+
+make_table(tr1, tr2, tr3, tr4, tr5, title = "DIV_RespectInUnit")
+```
+
+:::::
+::::::
+
+## Respect at Yale
+
+:::::: {.column-page-right}
+::::: {.panel-tabset}
+
+### Overall
+
+```{r}
+tr1 <- survey_trend(dat, question = "A2_disrespected_2", demographic = "Overall")
+txt <- trend_descriptor2(tr1)
+ggtrend(tr1, text = txt, pngname = "DIV_Overall_RespectAtYale")
+```
+
+### By faculty track
+
+```{r}
+tr2 <- survey_trend(dat, question = "A2_disrespected_2", demographic = "Ladder")
+txt <- trend_descriptor2(tr2)
+ggtrend(tr2, text = txt, pngname = "DIV_byFacultyTrack_RespectAtYale")
+```
+
+### By race/ethnicity
+
+```{r}
+tr3 <- survey_trend(dat, question = "A2_disrespected_2", demographic = "Race")
+txt <- trend_descriptor2(tr3)
+ggtrend(tr3, text = txt, pngname = "DIV_byRace_RespectAtYale")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: Underrepresented racial/ethnic identities include American Indian or Alaska Native, Black or African American, Hispanic or Latina/Latino/Latinx, Middle Eastern or North African, Native Hawaiian or Other Pacific Islander, and self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### By gender
+
+```{r}
+tr4 <- survey_trend(dat, question = "A2_disrespected_2", demographic = "Gender")
+txt <- trend_descriptor2(tr4)
+ggtrend(tr4, text = txt, pngname = "DIV_byGender_RespectAtYale")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: Underrepresented gender identities include non-binary, transgender, intersex, and self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### By sexual orientation
+
+```{r}
+tr5 <- survey_trend(dat, question = "A2_disrespected_2", demographic = "LGBQA")
+txt <- trend_descriptor2(tr5)
+ggtrend(tr5, text = txt, pngname = "DIV_bySexualOrientation_RespectAtYale")
+```
+
+:::{.column-page-right style="font-size: 90%;"}
+Note: LGBQA+ stands for lesbian, gay, bisexual, queer, asexual, and additional self-identified responses. See our <a href="https://faculty.yale.edu/data/faculty-climate-survey/2025-faculty-climate-survey/data-definitions-2025" target="_top">Data definitions</a> page for more information. Categories are not mutually exclusive, as survey respondents were asked to select all answers that apply.
+:::
+
+### Data table
+
+```{r}
+#| label: table-yale-respect
+#| fig-height: 8
+#| column: page-right
+
+make_table(tr1, tr2, tr3, tr4, tr5, title = "DIV_RespectAtYale")
+```
+
+:::::
+::::::
+
